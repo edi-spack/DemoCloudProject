@@ -1,0 +1,45 @@
+name: Apply terraform changes to the dev environment
+
+on:
+  push:
+    branches:
+      - develop
+    paths:
+      - "infra/dev/**"
+
+jobs:
+  apply-terraform-dev:
+    runs-on: ubuntu-latest
+    environment: gcp-dev
+    env:
+      TF_VAR_gcp_project: ${{ secrets.GCP_PROJECT }}
+      TF_VAR_gcp_region: ${{ secrets.GCP_REGION }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # - name: Authenticate on GCP (using Direct Workload Identity Federation)
+      #   uses: 'google-github-actions/auth@v2'
+      #   with:
+      #     project_id: 'democloudproject-gcp'
+      #     service_account: 'github@democloudproject-gcp.iam.gserviceaccount.com'
+      #     workload_identity_provider: 'projects/475909755575/locations/global/workloadIdentityPools/github-workload-identity-pool/providers/github-identity-provider'
+
+      - name: Authenticate on GCP
+        uses: "google-github-actions/auth@v2"
+        with:
+          credentials_json: "${{ secrets.GOOGLE_CREDENTIALS }}"
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.11.4
+
+      - name: Initialize Terraform
+        run: terraform init
+        working-directory: infra/dev
+
+      - name: Apply Terraform changes
+        run: terraform apply --auto-approve
+        working-directory: infra/dev
