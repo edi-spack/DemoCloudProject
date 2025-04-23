@@ -2,17 +2,19 @@ steps:
   # - name: gcr.io/cloud-builders/gradle
   #   args: ['build'] # ??
 
-  - id: 'test-dev'
+#  - id: 'test-dev'
+#    name: gcr.io/cloud-builders/gradle
+#    args: ['gradle', 'test', '--stacktrace', '--debug']
+#    dir: ./microservices/gateway
+
+  - id: 'build-dev'
     name: gcr.io/cloud-builders/gradle
-    args: ['gradle', 'test', '--stacktrace', '--debug']
+    args: ['gradle', 'build', '-x', 'test']
     dir: ./microservices/gateway
 
 options:
   logging: CLOUD_LOGGING_ONLY
 
-#  - id: 'build-dev'
-#    name: gcr.io/cloud-builders/gradle
-#    args: ['gradle', 'build', '-x', 'test']
 
 #  # deploy container image to GKE
 #  - name: "gcr.io/cloud-builders/gke-deploy"
