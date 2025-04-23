@@ -48,7 +48,7 @@ resource "google_service_account" "cloudbuild-service-account" {
   account_id  = "cloudbuild-service-account"
   description = "Service account for cloudbuild"
   project     = var.gcp_project
-}
+} # cloudbuild-service-account@democloudproject-gcp.iam.gserviceaccount.com
 
 resource "google_project_iam_member" "cloudbuild-sa-project-roles" {
   project = var.gcp_project
@@ -68,6 +68,14 @@ resource "google_project_iam_member" "compute-sa-project-roles" {
   project = var.gcp_project
   role    = "roles/owner"
   member  = "serviceAccount:${google_service_account.compute-service-account.email}"
+}
+
+# Grant cloudbuild service account "service account user" permission on compute service account
+
+resource "google_service_account_iam_member" "grant-cloudbuild-sa-user-role-for-compute-sa" {
+  member             = "serviceAccount:${google_service_account.cloudbuild-service-account.email}"
+  role               = "roles/iam.serviceAccountUser"
+  service_account_id = google_service_account.compute-service-account.name
 }
 
 # keys
