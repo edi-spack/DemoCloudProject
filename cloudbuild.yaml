@@ -4,7 +4,7 @@ steps:
 
   - id: 'test-dev'
     name: gcr.io/cloud-builders/gradle
-    args: ['gradle', 'test']
+    args: ['gradle', 'test', '--stacktrace', '--debug']
     dir: ./microservices/gateway
 
 options:
