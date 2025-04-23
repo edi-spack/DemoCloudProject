@@ -14,7 +14,7 @@ class GatewayApplicationTests {
 
 	@Test
 	fun helloWorld() {
-		println("Hello, World!")
+		println("Hello, World...")
 	}
 
 }
