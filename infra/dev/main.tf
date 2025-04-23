@@ -147,3 +147,21 @@
 #   hostname          = "backend-mig"
 #   instance_template = module.compute_instance_template.self_link
 # }
+
+resource "google_cloudbuild_trigger" "develop-push-trigger" {
+  name = "develop-push-trigger"
+  location = "global"
+
+  github {
+    owner = "edi-spack"
+    name  = "DemoCloudProject"
+
+    push {
+      branch = "develop"
+    }
+  }
+
+  filename = "cloudbuild.yaml"
+
+  service_account = google_service_account.cloudbuild-service-account.id
+}

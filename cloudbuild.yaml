@@ -1,0 +1,51 @@
+steps:
+  # - name: gcr.io/cloud-builders/gradle
+  #   args: ['build'] # ??
+
+  - id: 'test-dev'
+    name: gcr.io/cloud-builders/gradle
+    args: ['gradle', 'test']
+
+#  - id: 'build-dev'
+#    name: gcr.io/cloud-builders/gradle
+#    args: ['gradle', 'build', '-x', 'test']
+
+#  # deploy container image to GKE
+#  - name: "gcr.io/cloud-builders/gke-deploy"
+#    args:
+#      - run
+#      - --filename=kubernetes-resource-file
+#      - --location=location
+#      - --cluster=cluster
+
+
+
+
+
+#steps:
+## Deploy the test workflow with the commit sha
+#- id: 'deploy-test-workflow'
+#  name: 'gcr.io/cloud-builders/gcloud'
+#  args: ['workflows', 'deploy', '$_WORKFLOW_NAME-$BRANCH_NAME-$SHORT_SHA', '--source', 'gitops/workflow.yaml']
+#
+## Run the test workflow and capture the output
+#- id: 'run-test-workflow'
+#  name: 'gcr.io/cloud-builders/gcloud'
+#  entrypoint: 'bash'
+#  args: ['-c', 'gcloud workflows run $_WORKFLOW_NAME-$BRANCH_NAME-$SHORT_SHA > /workspace/testoutput.log']
+#
+## Delete the test workflow
+#- id: 'delete-test-workflow'
+#  name: 'gcr.io/cloud-builders/gcloud'
+#  args: ['workflows', 'delete', '$_WORKFLOW_NAME-$BRANCH_NAME-$SHORT_SHA', '--quiet']
+#
+## Check the test output
+#- id: 'check-test-workflow'
+#  name: 'gcr.io/cloud-builders/gcloud'
+#  entrypoint: 'bash'
+#  args: ['gitops/test-$BRANCH_NAME.sh']
+#
+## Deploy the workflow
+#- id: 'deploy-workflow'
+#  name: 'gcr.io/cloud-builders/gcloud'
+#  args: ['workflows', 'deploy', '$_WORKFLOW_NAME-$BRANCH_NAME', '--source', 'gitops/workflow.yaml']
