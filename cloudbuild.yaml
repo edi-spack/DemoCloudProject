@@ -6,6 +6,9 @@ steps:
     name: gcr.io/cloud-builders/gradle
     args: ['gradle', 'test']
 
+options:
+  logging: CLOUD_LOGGING_ONLY
+
 #  - id: 'build-dev'
 #    name: gcr.io/cloud-builders/gradle
 #    args: ['gradle', 'build', '-x', 'test']

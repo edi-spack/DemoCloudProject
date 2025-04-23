@@ -166,14 +166,14 @@ resource "google_cloudbuild_trigger" "develop-push-trigger" {
 
   service_account = google_service_account.cloudbuild-service-account.id
 
-  build {
-    options {
-      default_logs_bucket_behavior = "REGIONAL_USER_OWNED_BUCKET"
-    }
-
-    step {
-      name = "gcr.io/cloud-builders/gcloud"
-      args = ["echo", "This step is only required so default_logs_bucket_behavior can be set, please ignore it"]
-    }
-  }
+  # build {
+  #   options {
+  #     default_logs_bucket_behavior = "REGIONAL_USER_OWNED_BUCKET"
+  #   }
+  #
+  #   step {
+  #     name = "gcr.io/cloud-builders/gcloud"
+  #     args = ["echo", "This step is only required so default_logs_bucket_behavior can be set, please ignore it"]
+  #   }
+  # }
 }
