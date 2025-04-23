@@ -5,6 +5,7 @@ steps:
   - id: 'test-dev'
     name: gcr.io/cloud-builders/gradle
     args: ['gradle', 'test']
+    dir: ./microservices/gateway
 
 options:
   logging: CLOUD_LOGGING_ONLY
