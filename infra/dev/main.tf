@@ -150,8 +150,8 @@
 
 resource "google_cloudbuild_trigger" "develop-push-trigger" {
   name = "develop-push-trigger"
-  # location = "global"
-  location = "europe-central2"
+  location = "global"
+  # location = "europe-central2"
 
   github {
     owner = "edi-spack"
