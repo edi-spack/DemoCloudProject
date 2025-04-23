@@ -7,9 +7,14 @@ steps:
 #    args: ['gradle', 'test', '--stacktrace', '--debug']
 #    dir: ./microservices/gateway
 
-  - id: 'build-dev'
+#  - id: 'build-dev'
+#    name: gcr.io/cloud-builders/gradle
+#    args: ['gradle', 'build', '-x', 'test']
+#    dir: ./microservices/gateway
+
+  - id: 'test'
     name: gcr.io/cloud-builders/gradle
-    args: ['gradle', 'build', '-x', 'test']
+    args: [ 'gradle', '--version' ]
     dir: ./microservices/gateway
 
 options:
