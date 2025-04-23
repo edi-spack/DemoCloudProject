@@ -8,8 +8,13 @@ import org.springframework.context.annotation.Import
 @SpringBootTest
 class GatewayApplicationTests {
 
+//	@Test
+//	fun contextLoads() {
+//	}
+
 	@Test
-	fun contextLoads() {
+	fun helloWorld() {
+		println("Hello, World!")
 	}
 
 }
