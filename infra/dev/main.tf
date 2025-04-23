@@ -163,9 +163,9 @@ resource "google_cloudbuild_trigger" "develop-push-trigger" {
 
   filename = "cloudbuild.yaml"
 
-  build {
-    service_account = google_service_account.cloudbuild-service-account.id
+  service_account = google_service_account.cloudbuild-service-account.id
 
+  build {
     options {
       default_logs_bucket_behavior = "REGIONAL_USER_OWNED_BUCKET"
     }
