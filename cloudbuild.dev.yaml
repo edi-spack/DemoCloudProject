@@ -37,17 +37,15 @@ steps:
 
   - id: 'gateway-deploy-dev'
     name: 'gcr.io/cloud-builders/gcloud'
+    entrypoint: bash
     args:
-      - compute
-      - instance-groups
-      - managed
-      - rolling-action
-      - start-update
-      - gateway-mig-dev
+      - -c
+      - |
+          gcloud compute instance-groups managed rolling-action start-update gateway-mig-dev \
 #      - --version-template=$$(gcloud compute instance-templates list --filter="name~'gateway-container-template-dev'" --format="value(name)" | tail -1)
-      - --version=template=$(gcloud compute instance-templates list --filter="name~'gateway-container-template-dev'" --format="value(name)" --sort-by=~creationTimestamp | head -1)
+        --version=template=$(gcloud compute instance-templates list --filter="name~'gateway-container-template-dev'" --format="value(name)" --sort-by=~creationTimestamp | head -1) \
 #      - --region=europe-central2
-      - --zone=europe-central2-b
+        --zone=europe-central2-b
 
 images: [ 'europe-central2-docker.pkg.dev/democloudproject-gcp/docker-repo/gateway-dev' ]
 #images:
