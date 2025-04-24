@@ -45,7 +45,7 @@ steps:
       - start-update
       - gateway-mig-dev
 #      - --version-template=$$(gcloud compute instance-templates list --filter="name~'gateway-container-template-dev'" --format="value(name)" | tail -1)
-      - --version=template=$$(gcloud compute instance-templates list --filter="name~'gateway-container-template-dev'" --format="value(name)" --sort-by=~creationTimestamp | head -1)
+      - --version=template=$(gcloud compute instance-templates list --filter="name~'gateway-container-template-dev'" --format="value(name)" --sort-by=~creationTimestamp | head -1)
 #      - --region=europe-central2
       - --zone=europe-central2-b
 
