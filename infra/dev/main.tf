@@ -359,7 +359,7 @@ resource "google_dns_record_set" "gateway-dns-record-dev" {
 resource "google_compute_global_forwarding_rule" "gateway-forwarding-rule-dev" {
   name                  = "gateway-forwarding-rule-dev"
   port_range            = "80"
-  target                = google_compute_target_http_proxy.gateway-lb-proxy-dev.self_link
+  target                = google_compute_target_http_proxy.gateway-lb-proxy-dev.id
   load_balancing_scheme = "EXTERNAL"
   ip_protocol           = "TCP"
 
