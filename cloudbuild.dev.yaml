@@ -14,12 +14,13 @@ steps:
 #    args: ['gradle', 'build', '-x', 'test']
 #    dir: ./microservices/gateway
 
-  - id: 'test1'
+  - id: 'test-dev'
     name: gradle:8.13-jdk21
 #    name: 'gcr.io/cloud-builders/java/gradle'
 #    name: 'gcr.io/cloud-builders/gradle'
     dir: ./microservices/gateway
-    entrypoint: './gradlew'
+#    entrypoint: './gradlew'
+    entrypoint: 'gradle'
     args: [ 'test' ]
 
 #  - id: 'test2'
