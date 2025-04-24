@@ -177,3 +177,22 @@ resource "google_cloudbuild_trigger" "develop-push-trigger" {
   #   }
   # }
 }
+
+resource "google_artifact_registry_repository" "docker-repo" {
+  # provider      = google
+  # location      = "europe-central2"
+  location      = var.gcp_region
+  repository_id = "docker-repo"
+  description   = "Docker repository for project images"
+  format        = "DOCKER"
+
+  docker_config {
+    immutable_tags = false
+  }
+}
+
+resource "google_artifact_registry_repository_iam_member" "cloud-build-push-to-docker-repo-permission" {
+  repository = google_artifact_registry_repository.docker-repo.id
+  role       = "roles/artifactregistry.writer"
+  member     = "serviceAccount:${google_service_account.cloudbuild-service-account.email}"
+}

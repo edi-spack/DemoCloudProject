@@ -1,33 +1,28 @@
 steps:
-  # - name: gcr.io/cloud-builders/gradle
-  #   args: ['build'] # ??
-
-#  - id: 'test-dev'
-#    dir: ./microservices/gateway
-#    name: gcr.io/cloud-builders/gradle
-#    entrypoint: gradle
-#    args: [ "test", "--info" ]
-#    args: ['gradle', 'test']
-
-#  - id: 'build-dev'
-#    name: gcr.io/cloud-builders/gradle
-#    args: ['gradle', 'build', '-x', 'test']
-#    dir: ./microservices/gateway
-
-  - id: 'test-dev'
+  - id: 'gateway-test-dev'
     name: gradle:8.13-jdk21
-#    name: 'gcr.io/cloud-builders/java/gradle'
-#    name: 'gcr.io/cloud-builders/gradle'
     dir: ./microservices/gateway
-#    entrypoint: './gradlew'
-    entrypoint: 'gradle'
+    entrypoint: gradle
     args: [ 'test' ]
 
-#  - id: 'test2'
-#    name: gcr.io/cloud-builders/gradle
-#    dir: ./microservices/gateway
-#    entrypoint: ./gradlew
+  - id: 'gateway-assemble-dev'
+    name: gradle:8.13-jdk21
+    dir: ./microservices/gateway
+    entrypoint: gradle
+    args: [ 'assemble' ]
 
+
+  - id: 'gateway-build-docker-image'
+    name: gcr.io/cloud-builders/docker
+    args: [ 'build', '-t', 'europe-central2-docker.pkg.dev/democloudproject-gcp/docker-repo/gateway-dev', '--build-arg=JAR_FILE=build/libs/gateway-0.0.1-SNAPSHOT.jar', '.' ]
+
+#  - id: 'gateway-build-dev'
+#    name: gradle:8.13-jdk21
+#    dir: ./microservices/gateway
+#    entrypoint: gradle
+#    args: ['build', '-x', 'test']
+
+images: [ 'europe-central2-docker.pkg.dev/democloudproject-gcp/docker-repo/gateway-dev' ]
 #images:
 #  - 'gcr.io/$PROJECT_ID/gateway-dev:latest'
 
