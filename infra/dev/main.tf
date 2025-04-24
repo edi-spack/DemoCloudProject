@@ -261,9 +261,9 @@ resource "google_compute_health_check" "gateway-health-check-dev" {
   }
 }
 
-resource "google_compute_region_instance_group_manager" "gateway-mig-dev" {
+resource "google_compute_region_instance_group_manager" "gateway-regional-mig-dev" {
 # resource "google_compute_instance_group_manager" "gateway-mig-dev" {
-  name               = "gateway-mig-dev"
+  name               = "gateway-regional-mig-dev"
   base_instance_name = "gateway-dev"
   # zone               = "${var.gcp_region}-b"
   region             = var.gcp_region
@@ -291,7 +291,7 @@ resource "google_compute_region_instance_group_manager" "gateway-mig-dev" {
 resource "google_compute_region_autoscaler" "gateway-autoscaler-dev" {
   name   = "gateway-autoscaler-dev"
   region = var.gcp_region
-  target = google_compute_region_instance_group_manager.gateway-mig-dev.id
+  target = google_compute_region_instance_group_manager.gateway-regional-mig-dev.id
 
   autoscaling_policy {
     max_replicas    = 1
@@ -315,7 +315,7 @@ resource "google_compute_region_backend_service" "gateway-regional-backend-servi
 
   health_checks = [google_compute_health_check.gateway-health-check-dev.self_link]
   backend {
-    group = google_compute_region_instance_group_manager.gateway-mig-dev.instance_group
+    group = google_compute_region_instance_group_manager.gateway-regional-mig-dev.instance_group
     balancing_mode  = "UTILIZATION"
     # capacity_scaler = 1.0 # CAN'T SET FOR EXTERNAL
   }
