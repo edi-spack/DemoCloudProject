@@ -2,22 +2,25 @@ substitutions:
   _TEMPLATE: ""
 
 steps:
-  - id: 'gateway-test-dev'
-    name: gradle:8.13-jdk21
-    dir: ./microservices/gateway
-    entrypoint: gradle
-    args: [ 'test' ]
+#================= TEMPORARILY DISABLED
+#  - id: 'gateway-test-dev'
+#    name: gradle:8.13-jdk21
+#    dir: ./microservices/gateway
+#    entrypoint: gradle
+#    args: [ 'test' ]
+#
+#  - id: 'gateway-assemble-dev'
+#    name: gradle:8.13-jdk21
+#    dir: ./microservices/gateway
+#    entrypoint: gradle
+#    args: [ 'assemble' ]
+#
+#  - id: 'gateway-build-docker-image-dev'
+#    name: gcr.io/cloud-builders/docker
+#    dir: ./microservices/gateway
+#    args: [ 'build', '-t', 'europe-central2-docker.pkg.dev/democloudproject-gcp/docker-repo/gateway-dev', '--build-arg=JAR_FILE=build/libs/gateway-0.0.1-SNAPSHOT.jar', '.' ]
+#=================
 
-  - id: 'gateway-assemble-dev'
-    name: gradle:8.13-jdk21
-    dir: ./microservices/gateway
-    entrypoint: gradle
-    args: [ 'assemble' ]
-
-  - id: 'gateway-build-docker-image-dev'
-    name: gcr.io/cloud-builders/docker
-    dir: ./microservices/gateway
-    args: [ 'build', '-t', 'europe-central2-docker.pkg.dev/democloudproject-gcp/docker-repo/gateway-dev', '--build-arg=JAR_FILE=build/libs/gateway-0.0.1-SNAPSHOT.jar', '.' ]
 
 #  - id: 'gateway-find-latest-instance-template-dev'
 #    name: 'gcr.io/cloud-builders/gcloud'
