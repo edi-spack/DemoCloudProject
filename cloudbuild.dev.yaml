@@ -11,17 +11,22 @@ steps:
     entrypoint: gradle
     args: [ 'assemble' ]
 
-
-  - id: 'gateway-build-docker-image'
+  - id: 'gateway-build-docker-image-dev'
     name: gcr.io/cloud-builders/docker
     dir: ./microservices/gateway
     args: [ 'build', '-t', 'europe-central2-docker.pkg.dev/democloudproject-gcp/docker-repo/gateway-dev', '--build-arg=JAR_FILE=build/libs/gateway-0.0.1-SNAPSHOT.jar', '.' ]
 
-#  - id: 'gateway-build-dev'
-#    name: gradle:8.13-jdk21
-#    dir: ./microservices/gateway
-#    entrypoint: gradle
-#    args: ['build', '-x', 'test']
+#  - id: 'gateway-deploy-dev'
+#    name: 'gcr.io/cloud-builders/gcloud'
+#    args:
+#      - compute
+#      - instance-groups
+#      - managed
+#      - rolling-action
+#      - start-update
+#      - gateway-mig-dev
+#      - --version-template=$(gcloud compute instance-templates list --filter="name~'gateway-container-template-dev'" --format="value(name)" | tail -1)
+#      - --region=europe-central2
 
 images: [ 'europe-central2-docker.pkg.dev/democloudproject-gcp/docker-repo/gateway-dev' ]
 #images:
@@ -30,7 +35,6 @@ images: [ 'europe-central2-docker.pkg.dev/democloudproject-gcp/docker-repo/gatew
 options:
   logging: CLOUD_LOGGING_ONLY
 
-
 #  # deploy container image to GKE
 #  - name: "gcr.io/cloud-builders/gke-deploy"
 #    args:
@@ -38,35 +42,3 @@ options:
 #      - --filename=kubernetes-resource-file
 #      - --location=location
 #      - --cluster=cluster
-
-
-
-
-
-#steps:
-## Deploy the test workflow with the commit sha
-#- id: 'deploy-test-workflow'
-#  name: 'gcr.io/cloud-builders/gcloud'
-#  args: ['workflows', 'deploy', '$_WORKFLOW_NAME-$BRANCH_NAME-$SHORT_SHA', '--source', 'gitops/workflow.yaml']
-#
-## Run the test workflow and capture the output
-#- id: 'run-test-workflow'
-#  name: 'gcr.io/cloud-builders/gcloud'
-#  entrypoint: 'bash'
-#  args: ['-c', 'gcloud workflows run $_WORKFLOW_NAME-$BRANCH_NAME-$SHORT_SHA > /workspace/testoutput.log']
-#
-## Delete the test workflow
-#- id: 'delete-test-workflow'
-#  name: 'gcr.io/cloud-builders/gcloud'
-#  args: ['workflows', 'delete', '$_WORKFLOW_NAME-$BRANCH_NAME-$SHORT_SHA', '--quiet']
-#
-## Check the test output
-#- id: 'check-test-workflow'
-#  name: 'gcr.io/cloud-builders/gcloud'
-#  entrypoint: 'bash'
-#  args: ['gitops/test-$BRANCH_NAME.sh']
-#
-## Deploy the workflow
-#- id: 'deploy-workflow'
-#  name: 'gcr.io/cloud-builders/gcloud'
-#  args: ['workflows', 'deploy', '$_WORKFLOW_NAME-$BRANCH_NAME', '--source', 'gitops/workflow.yaml']

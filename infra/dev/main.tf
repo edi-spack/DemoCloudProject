@@ -196,3 +196,79 @@ resource "google_artifact_registry_repository_iam_member" "cloud-build-push-to-d
   role       = "roles/artifactregistry.writer"
   member     = "serviceAccount:${google_service_account.cloudbuild-service-account.email}"
 }
+
+resource "google_compute_instance_template" "gateway-container-template-dev" {
+  name = "gateway-container-template-dev"
+
+  machine_type = "e2-micro"
+
+  region = var.gcp_region
+
+  tags = ["http-server"]
+
+  network_interface {
+    network = "default"
+    # subnetwork = "${var.subnetwork_name}"
+    # access_config {
+    # }
+  }
+
+  disk {
+    auto_delete = true
+    boot = true
+    source_image = "projects/cos-cloud/global/images/family/cos-stable"
+    # type = "PERSISTENT"
+    # disk_type = "pd-ssd"
+  }
+
+  # service_account {
+  #   email = "default"
+  #   scopes = [
+  #     "https://www.googleapis.com/auth/compute",
+  #     "https://www.googleapis.com/auth/logging.write",
+  #     "https://www.googleapis.com/auth/monitoring.write",
+  #     "https://www.googleapis.com/auth/devstorage.full_control"
+  #   ]
+  # }
+
+  service_account {
+    email  = google_service_account.compute-service-account.email
+    scopes = ["cloud-platform"]
+  }
+
+  metadata = {
+    "gce-container-declaration" = <<-EOT
+      spec:
+        containers:
+          - name: app
+            image: ${var.gcp_region}-docker.pkg.dev/${var.gcp_project}/${google_artifact_registry_repository.docker-repo.name}/gateway-dev:latest
+            stdin: false
+            tty: false
+        restartPolicy: Always
+    EOT
+  }
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "google_compute_instance_group_manager" "gateway-mig-dev" {
+  name               = "gateway-mig-dev"
+  base_instance_name = "gateway-dev"
+  zone               = "${var.gcp_region}-b"
+
+  version {
+    instance_template = google_compute_instance_template.gateway-container-template-dev.self_link
+  }
+
+  target_size = 1
+
+  update_policy {
+    type                  = "PROACTIVE"
+    minimal_action        = "REPLACE"
+    max_surge_fixed       = 1
+    max_unavailable_fixed = 0
+    replacement_method    = "RECREATE"
+  }
+}
