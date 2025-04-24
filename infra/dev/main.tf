@@ -261,11 +261,12 @@ resource "google_compute_health_check" "gateway-health-check-dev" {
   }
 }
 
-# resource "google_compute_region_instance_group_manager" "gateway-mig-dev" {
-resource "google_compute_instance_group_manager" "gateway-mig-dev" {
+resource "google_compute_region_instance_group_manager" "gateway-mig-dev" {
+# resource "google_compute_instance_group_manager" "gateway-mig-dev" {
   name               = "gateway-mig-dev"
   base_instance_name = "gateway-dev"
-  zone               = "${var.gcp_region}-b"
+  # zone               = "${var.gcp_region}-b"
+  region             = var.gcp_region
 
   version {
     instance_template = google_compute_instance_template.gateway-container-template-dev.self_link
@@ -290,7 +291,7 @@ resource "google_compute_instance_group_manager" "gateway-mig-dev" {
 resource "google_compute_region_autoscaler" "gateway-autoscaler-dev" {
   name   = "gateway-autoscaler-dev"
   region = var.gcp_region
-  target = google_compute_instance_group_manager.gateway-mig-dev.id
+  target = google_compute_region_instance_group_manager.gateway-mig-dev.id
 
   autoscaling_policy {
     max_replicas    = 1
@@ -301,18 +302,20 @@ resource "google_compute_region_autoscaler" "gateway-autoscaler-dev" {
   }
 }
 
-resource "google_compute_backend_service" "gateway-backend-service-dev" {
+resource "google_compute_region_backend_service" "gateway-backend-service-dev" {
   name                  = "gateway-backend-service-dev"
   provider              = google-beta
+  region                = var.gcp_region
   protocol              = "HTTP"
   port_name             = "http"
   # load_balancing_scheme = "INTERNAL_MANAGED" # ???????
   load_balancing_scheme = "EXTERNAL" # ???????
   timeout_sec           = 10
   enable_cdn            = false
+
   health_checks = [google_compute_health_check.gateway-health-check-dev.self_link]
   backend {
-    group = google_compute_instance_group_manager.gateway-mig-dev.instance_group
+    group = google_compute_region_instance_group_manager.gateway-mig-dev.instance_group
     balancing_mode  = "UTILIZATION"
     capacity_scaler = 1.0
   }
@@ -320,14 +323,14 @@ resource "google_compute_backend_service" "gateway-backend-service-dev" {
 
 resource "google_compute_url_map" "gateway-url-map-dev" {
   name            = "gateway-url-map-dev"
-  default_service = google_compute_backend_service.gateway-backend-service-dev.self_link
+  default_service = google_compute_region_backend_service.gateway-backend-service-dev.self_link
   # host_rule {
   #   hosts        = ["*"]
   #   path_matcher = "allpaths"
   # }
   # path_matcher {
   #   name            = "allpaths"
-  #   default_service = google_compute_backend_service.gateway-backend-service-dev.self_link
+  #   default_service = google_compute_region_backend_service.gateway-backend-service-dev.self_link
   # }
 }
 
