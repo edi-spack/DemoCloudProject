@@ -15,7 +15,8 @@ steps:
 #    dir: ./microservices/gateway
 
   - id: 'test1'
-    name: 'gcr.io/cloud-builders/java/gradle'
+    name: gradle:8.13-jdk17
+#    name: 'gcr.io/cloud-builders/java/gradle'
 #    name: 'gcr.io/cloud-builders/gradle'
     dir: ./microservices/gateway
     entrypoint: './gradlew'
