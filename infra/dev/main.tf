@@ -252,8 +252,8 @@ resource "google_compute_instance_template" "gateway-container-template-dev" {
   }
 }
 
-resource "google_compute_health_check" "gateway-health-check-dev" {
-  name = "gateway-health-check-dev"
+resource "google_compute_region_health_check" "gateway-regional-health-check-dev" {
+  name = "gateway-regional-health-check-dev"
 
   http_health_check {
     port = 80
@@ -283,7 +283,7 @@ resource "google_compute_region_instance_group_manager" "gateway-regional-mig-de
   }
 
   auto_healing_policies {
-    health_check      = google_compute_health_check.gateway-health-check-dev.self_link
+    health_check      = google_compute_region_health_check.gateway-regional-health-check-dev.self_link
     initial_delay_sec = 30
   }
 }
@@ -313,7 +313,7 @@ resource "google_compute_region_backend_service" "gateway-regional-backend-servi
   timeout_sec           = 10
   enable_cdn            = false
 
-  health_checks = [google_compute_health_check.gateway-health-check-dev.self_link]
+  health_checks = [google_compute_region_health_check.gateway-regional-health-check-dev.self_link]
   backend {
     group = google_compute_region_instance_group_manager.gateway-regional-mig-dev.instance_group
     balancing_mode  = "UTILIZATION"
