@@ -252,6 +252,16 @@ resource "google_compute_instance_template" "gateway-container-template-dev" {
   }
 }
 
+resource "google_compute_health_check" "gateway-health-check-dev" {
+  name = "gateway-health-check-dev"
+
+  http_health_check {
+    port = 80
+    request_path = "/"
+  }
+}
+
+# resource "google_compute_region_instance_group_manager" "gateway-mig-dev" {
 resource "google_compute_instance_group_manager" "gateway-mig-dev" {
   name               = "gateway-mig-dev"
   base_instance_name = "gateway-dev"
@@ -270,6 +280,25 @@ resource "google_compute_instance_group_manager" "gateway-mig-dev" {
     max_unavailable_fixed = 1
     replacement_method    = "RECREATE"
   }
+
+  auto_healing_policies {
+    health_check      = google_compute_health_check.gateway-health-check-dev.self_link
+    initial_delay_sec = 30
+  }
+}
+
+resource "google_compute_region_autoscaler" "gateway-autoscaler-dev" {
+  name   = "gateway-autoscaler-dev"
+  region = var.gcp_region
+  target = google_compute_instance_group_manager.gateway-mig-dev.id
+
+  autoscaling_policy {
+    max_replicas    = 1
+    min_replicas    = 1
+    cpu_utilization {
+      target = 0.6
+    }
+  }
 }
 
 resource "google_compute_backend_service" "gateway-backend-service-dev" {
@@ -280,7 +309,7 @@ resource "google_compute_backend_service" "gateway-backend-service-dev" {
   load_balancing_scheme = "INTERNAL_MANAGED" # ???????
   timeout_sec           = 10
   enable_cdn            = false
-  # health_checks = [google_compute_health_check.default.self_link]
+  health_checks = [google_compute_health_check.gateway-health-check-dev.self_link]
   backend {
     group = google_compute_instance_group_manager.gateway-mig-dev.instance_group
     balancing_mode  = "UTILIZATION"
