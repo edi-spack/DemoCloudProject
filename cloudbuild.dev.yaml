@@ -16,17 +16,17 @@ steps:
     dir: ./microservices/gateway
     args: [ 'build', '-t', 'europe-central2-docker.pkg.dev/democloudproject-gcp/docker-repo/gateway-dev', '--build-arg=JAR_FILE=build/libs/gateway-0.0.1-SNAPSHOT.jar', '.' ]
 
-#  - id: 'gateway-deploy-dev'
-#    name: 'gcr.io/cloud-builders/gcloud'
-#    args:
-#      - compute
-#      - instance-groups
-#      - managed
-#      - rolling-action
-#      - start-update
-#      - gateway-mig-dev
-#      - --version-template=$(gcloud compute instance-templates list --filter="name~'gateway-container-template-dev'" --format="value(name)" | tail -1)
-#      - --region=europe-central2
+  - id: 'gateway-deploy-dev'
+    name: 'gcr.io/cloud-builders/gcloud'
+    args:
+      - compute
+      - instance-groups
+      - managed
+      - rolling-action
+      - start-update
+      - gateway-mig-dev
+      - --version-template=$(gcloud compute instance-templates list --filter="name~'gateway-container-template-dev'" --format="value(name)" | tail -1)
+      - --region=europe-central2
 
 images: [ 'europe-central2-docker.pkg.dev/democloudproject-gcp/docker-repo/gateway-dev' ]
 #images:
