@@ -37,13 +37,7 @@ steps:
 
   - id: 'gateway-deploy-dev'
     name: 'gcr.io/cloud-builders/gcloud'
-#    entrypoint: 'bash'
     args:
-#      - -c
-#      - |
-#        gcloud compute instance-groups managed rolling-action start-update gateway-mig-dev \
-#          --version-template=${_TEMPLATE} \
-#          --region=europe-central2
       - compute
       - instance-groups
       - managed
