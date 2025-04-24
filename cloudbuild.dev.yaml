@@ -2,11 +2,11 @@ steps:
   # - name: gcr.io/cloud-builders/gradle
   #   args: ['build'] # ??
 
-  - id: 'test-dev'
-    dir: ./microservices/gateway
-    name: gcr.io/cloud-builders/gradle
-    entrypoint: gradle
-    args: [ "test", "--info" ]
+#  - id: 'test-dev'
+#    dir: ./microservices/gateway
+#    name: gcr.io/cloud-builders/gradle
+#    entrypoint: gradle
+#    args: [ "test", "--info" ]
 #    args: ['gradle', 'test']
 
 #  - id: 'build-dev'
@@ -14,10 +14,10 @@ steps:
 #    args: ['gradle', 'build', '-x', 'test']
 #    dir: ./microservices/gateway
 
-#  - id: 'test'
-#    name: gcr.io/cloud-builders/gradle
-#    args: [ 'gradle', '--version' ]
-#    dir: ./microservices/gateway
+  - id: 'test'
+    name: gcr.io/cloud-builders/gradle
+    args: [ 'pwd', '&&', 'ls' ]
+    dir: ./microservices/gateway
 
 #images:
 #  - 'gcr.io/$PROJECT_ID/gateway-dev:latest'
