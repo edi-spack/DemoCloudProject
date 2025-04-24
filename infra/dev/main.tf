@@ -23,22 +23,22 @@
 # # }
 #
 # # Reserve a static external IP address
-# resource "google_compute_global_address" "backend-dev-lb-ip" {
-#   name = "backend-dev-lb-ip"
+# resource "google_compute_global_address" "gateway-lb-ip-dev" {
+#   name = "gateway-lb-ip-dev"
 # }
 #
 # # Get the managed DNS zone
-# data "google_dns_managed_zone" "dns_zone" {
+# data "google_dns_managed_zone" "dns-zone" {
 #   name = "gcpdns"
 # }
 #
 # # Add the IP to the DNS
-# resource "google_dns_record_set" "backend-dev-dns-record" {
-#   name         = "dev.${data.google_dns_managed_zone.dns_zone.dns_name}"
+# resource "google_dns_record_set" "gateway-dns-record-dev" {
+#   name         = "dev.${data.google_dns_managed_zone.dns-zone.dns_name}"
 #   type         = "A"
 #   ttl          = 300
-#   managed_zone = data.google_dns_managed_zone.dns_zone.name
-#   rrdatas      = [google_compute_global_address.backend-dev-lb-ip.address]
+#   managed_zone = data.google_dns_managed_zone.dns-zone.name
+#   rrdatas      = [google_compute_global_address.gateway-lb-ip-dev.address]
 # }
 #
 # # # Add the bucket as a CDN backend
@@ -110,43 +110,42 @@
 #   port_range            = "80"
 #   target                = google_compute_target_http_proxy.backend-dev-lb-proxy.self_link
 # }
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-# module "compute_instance_template" {
-#   source  = "terraform-google-modules/vm/google//modules/instance_template"
-#   version = "~> 13.0"
-#
-#   project_id = var.gcp_project
-#   region     = var.gcp_region
-#   network    = "default"
-#   # subnetwork         = var.subnetwork
-#   service_account = google_service_account.compute-service-account.email
-#   # subnetwork_project = var.project_id
-# }
-#
-# module "compute_managed_instance_group" {
-#   source  = "terraform-google-modules/vm/google//modules/mig"
-#   version = "~> 13.0"
-#
-#   project_id        = var.gcp_project
-#   region            = var.gcp_region
-#   target_size       = 1
-#   hostname          = "backend-mig"
-#   instance_template = module.compute_instance_template.self_link
-# }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+######################
+
 
 resource "google_cloudbuild_trigger" "develop-push-trigger" {
   name = "develop-push-trigger"
@@ -271,4 +270,75 @@ resource "google_compute_instance_group_manager" "gateway-mig-dev" {
     max_unavailable_fixed = 1
     replacement_method    = "RECREATE"
   }
+}
+
+resource "google_compute_backend_service" "gateway-backend-service-dev" {
+  name                  = "gateway-backend-service-dev"
+  provider              = google-beta
+  protocol              = "HTTP"
+  port_name             = "http"
+  load_balancing_scheme = "INTERNAL_MANAGED" # ???????
+  timeout_sec           = 10
+  enable_cdn            = false
+  # health_checks = [google_compute_health_check.default.self_link]
+  backend {
+    group = google_compute_instance_group_manager.gateway-mig-dev.instance_group
+    balancing_mode  = "UTILIZATION"
+    capacity_scaler = 1.0
+  }
+}
+
+resource "google_compute_url_map" "gateway-url-map-dev" {
+  name            = "gateway-url-map-dev"
+  default_service = google_compute_backend_service.gateway-backend-service-dev.self_link
+  # host_rule {
+  #   hosts        = ["*"]
+  #   path_matcher = "allpaths"
+  # }
+  # path_matcher {
+  #   name            = "allpaths"
+  #   default_service = google_compute_backend_service.gateway-backend-service-dev.self_link
+  # }
+}
+
+resource "google_compute_target_http_proxy" "gateway-lb-proxy-dev" {
+  name   = "gateway-lb-proxy-dev"
+  url_map = google_compute_url_map.gateway-url-map-dev.self_link
+}
+
+#######
+# # Reserve a static external IP address
+resource "google_compute_global_address" "gateway-lb-ip-dev" {
+  name = "gateway-lb-ip-dev"
+}
+
+# Get the managed DNS zone
+data "google_dns_managed_zone" "dns-zone" {
+  name = "gcpdns"
+}
+
+# Add the IP to the DNS
+resource "google_dns_record_set" "gateway-dns-record-dev" {
+  name         = "dev.${data.google_dns_managed_zone.dns-zone.dns_name}"
+  type         = "A"
+  ttl          = 300
+  managed_zone = data.google_dns_managed_zone.dns-zone.name
+  rrdatas      = [google_compute_global_address.gateway-lb-ip-dev.address]
+}
+#######
+
+resource "google_compute_global_forwarding_rule" "gateway-forwarding-rule-dev" {
+  name                  = "gateway-forwarding-rule-dev"
+  port_range            = "80"
+  target                = google_compute_target_http_proxy.gateway-lb-proxy-dev.self_link
+  load_balancing_scheme = "EXTERNAL"
+  ip_protocol           = "TCP"
+
+
+  # name                  = "backend-dev-forwarding-rule"
+  # port_range            = "80"
+  # target                = google_compute_target_http_proxy.backend-dev-lb-proxy.self_link
+  # load_balancing_scheme = "EXTERNAL"
+  # ip_protocol           = "TCP"
+  ip_address            = google_compute_global_address.gateway-lb-ip-dev.address
 }
