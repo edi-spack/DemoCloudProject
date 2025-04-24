@@ -6,7 +6,7 @@ steps:
     dir: ./microservices/gateway
     name: gcr.io/cloud-builders/gradle
     entrypoint: gradle
-    args: [ "test" ]
+    args: [ "test", "--info" ]
 #    args: ['gradle', 'test']
 
 #  - id: 'build-dev'
