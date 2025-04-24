@@ -1,3 +1,6 @@
+substitutions:
+  _TEMPLATE: ""
+
 steps:
   - id: 'gateway-test-dev'
     name: gradle:8.13-jdk21
@@ -16,7 +19,7 @@ steps:
     dir: ./microservices/gateway
     args: [ 'build', '-t', 'europe-central2-docker.pkg.dev/democloudproject-gcp/docker-repo/gateway-dev', '--build-arg=JAR_FILE=build/libs/gateway-0.0.1-SNAPSHOT.jar', '.' ]
 
-  - id: 'gateway-deploy-dev'
+  - id: 'gateway-find-latest-instance-template-dev'
     name: 'gcr.io/cloud-builders/gcloud'
     entrypoint: 'bash'
     args:
@@ -26,11 +29,18 @@ steps:
           --filter="name~'gateway-container-template-dev'" \
           --format="value(name)" \
           --sort-by=~creationTimestamp | head -1)
-        
-        gcloud compute instance-groups managed rolling-action start-update gateway-mig-dev \
-          --version-template=$TEMPLATE \
-          --region=europe-central2
 
+        echo "TEMPLATE=$TEMPLATE" >> $HOME/.cloudbuild_substitutions
+
+  - id: 'gateway-deploy-dev'
+    name: 'gcr.io/cloud-builders/gcloud'
+    entrypoint: 'bash'
+    args:
+      - -c
+      - |
+        gcloud compute instance-groups managed rolling-action start-update gateway-mig-dev \
+          --version-template=${_TEMPLATE} \
+          --region=europe-central2
 #      - compute
 #      - instance-groups
 #      - managed
