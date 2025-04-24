@@ -309,7 +309,7 @@ resource "google_compute_region_backend_service" "gateway-backend-service-dev" {
   protocol              = "HTTP"
   port_name             = "http"
   # load_balancing_scheme = "INTERNAL_MANAGED" # ???????
-  load_balancing_scheme = "EXTERNAL" # ???????
+  load_balancing_scheme = "EXTERNAL"
   timeout_sec           = 10
   enable_cdn            = false
 
@@ -317,7 +317,7 @@ resource "google_compute_region_backend_service" "gateway-backend-service-dev" {
   backend {
     group = google_compute_region_instance_group_manager.gateway-mig-dev.instance_group
     balancing_mode  = "UTILIZATION"
-    capacity_scaler = 1.0
+    # capacity_scaler = 1.0 # CAN'T SET FOR EXTERNAL
   }
 }
 
