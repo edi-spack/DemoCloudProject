@@ -302,8 +302,8 @@ resource "google_compute_region_autoscaler" "gateway-autoscaler-dev" {
   }
 }
 
-resource "google_compute_region_backend_service" "gateway-backend-service-dev" {
-  name                  = "gateway-backend-service-dev"
+resource "google_compute_region_backend_service" "gateway-regional-backend-service-dev" {
+  name                  = "gateway-regional-backend-service-dev"
   provider              = google-beta
   region                = var.gcp_region
   protocol              = "HTTP"
@@ -321,9 +321,9 @@ resource "google_compute_region_backend_service" "gateway-backend-service-dev" {
   }
 }
 
-resource "google_compute_url_map" "gateway-url-map-dev" {
-  name            = "gateway-url-map-dev"
-  default_service = google_compute_region_backend_service.gateway-backend-service-dev.self_link
+resource "google_compute_url_map" "gateway-regional-url-map-dev" {
+  name            = "gateway-regional-url-map-dev"
+  default_service = google_compute_region_backend_service.gateway-regional-backend-service-dev.self_link
   # host_rule {
   #   hosts        = ["*"]
   #   path_matcher = "allpaths"
@@ -334,9 +334,9 @@ resource "google_compute_url_map" "gateway-url-map-dev" {
   # }
 }
 
-resource "google_compute_target_http_proxy" "gateway-lb-proxy-dev" {
-  name   = "gateway-lb-proxy-dev"
-  url_map = google_compute_url_map.gateway-url-map-dev.self_link
+resource "google_compute_target_http_proxy" "gateway-regional-lb-proxy-dev" {
+  name   = "gateway-regional-lb-proxy-dev"
+  url_map = google_compute_url_map.gateway-regional-url-map-dev.self_link
 }
 
 #######
@@ -363,7 +363,7 @@ resource "google_dns_record_set" "gateway-dns-record-dev" {
 resource "google_compute_global_forwarding_rule" "gateway-forwarding-rule-dev" {
   name                  = "gateway-forwarding-rule-dev"
   port_range            = "80"
-  target                = google_compute_target_http_proxy.gateway-lb-proxy-dev.id
+  target                = google_compute_target_http_proxy.gateway-regional-lb-proxy-dev.id
   load_balancing_scheme = "EXTERNAL"
   ip_protocol           = "TCP"
 
