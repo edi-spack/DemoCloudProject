@@ -15,9 +15,9 @@ steps:
 #    dir: ./microservices/gateway
 
   - id: 'test1'
-    name: gcr.io/cloud-builders/gradle
+    name: gcr.io/cloud-builders/java
     dir: ./microservices/gateway
-    entrypoint: gradle
+    entrypoint: './gradlew'
     args: [ 'test' ]
 
 #  - id: 'test2'
