@@ -14,10 +14,15 @@ steps:
 #    args: ['gradle', 'build', '-x', 'test']
 #    dir: ./microservices/gateway
 
-  - id: 'test'
+  - id: 'test1'
     name: gcr.io/cloud-builders/gradle
-    args: [ 'pwd', '&&', 'ls' ]
-    dir: ./microservices/gateway
+    entrypoint: pwd
+#    args: [ 'pwd', '&&', 'ls' ]
+#    dir: ./microservices/gateway
+
+  - id: 'test2'
+    name: gcr.io/cloud-builders/gradle
+    entrypoint: ls
 
 #images:
 #  - 'gcr.io/$PROJECT_ID/gateway-dev:latest'
