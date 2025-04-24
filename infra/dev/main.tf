@@ -162,7 +162,7 @@ resource "google_cloudbuild_trigger" "develop-push-trigger" {
     }
   }
 
-  filename = "cloudbuild.yaml"
+  filename = "cloudbuild.dev.yaml"
 
   service_account = google_service_account.cloudbuild-service-account.id
 
