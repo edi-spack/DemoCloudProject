@@ -306,7 +306,8 @@ resource "google_compute_backend_service" "gateway-backend-service-dev" {
   provider              = google-beta
   protocol              = "HTTP"
   port_name             = "http"
-  load_balancing_scheme = "INTERNAL_MANAGED" # ???????
+  # load_balancing_scheme = "INTERNAL_MANAGED" # ???????
+  load_balancing_scheme = "EXTERNAL" # ???????
   timeout_sec           = 10
   enable_cdn            = false
   health_checks = [google_compute_health_check.gateway-health-check-dev.self_link]
