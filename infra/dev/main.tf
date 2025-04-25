@@ -449,7 +449,7 @@ resource "google_compute_region_instance_group_manager" "gateway-r-mig-dev" {
   target_size = 1
 
   auto_healing_policies {
-    health_check      = google_compute_region_health_check.gateway-health-check-dev.self_link
+    health_check      = google_compute_health_check.gateway-health-check-dev.self_link
     initial_delay_sec = 60
   }
 
@@ -468,7 +468,8 @@ resource "google_compute_region_instance_group_manager" "gateway-r-mig-dev" {
 }
 
 # Health check
-resource "google_compute_region_health_check" "gateway-health-check-dev" {
+# resource "google_compute_region_health_check" "gateway-health-check-dev" {
+resource "google_compute_health_check" "gateway-health-check-dev" {
   name               = "gateway-health-check-dev"
   check_interval_sec = 60
   timeout_sec        = 5
@@ -502,7 +503,7 @@ resource "google_compute_backend_service" "gateway-backend-service-dev" {
   protocol              = "HTTP"
   port_name             = "http"
   load_balancing_scheme = "EXTERNAL"
-  health_checks         = [google_compute_region_health_check.gateway-health-check-dev.self_link]
+  health_checks         = [google_compute_health_check.gateway-health-check-dev.self_link]
 
   backend {
     group = google_compute_region_instance_group_manager.gateway-r-mig-dev.instance_group
