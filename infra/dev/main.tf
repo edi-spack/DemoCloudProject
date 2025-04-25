@@ -437,8 +437,8 @@ resource "google_compute_instance_template" "gateway-vm-template-dev" {
 }
 
 # Regional MIG
-resource "google_compute_region_instance_group_manager" "gateway-mig-dev" {
-  name               = "gateway-mig-dev"
+resource "google_compute_region_instance_group_manager" "gateway-r-mig-dev" {
+  name               = "gateway-r-mig-dev"
   base_instance_name = "gateway-dev"
   region             = var.region
 
@@ -505,7 +505,7 @@ resource "google_compute_region_backend_service" "gateway-backend-service-dev" {
   health_checks         = [google_compute_region_health_check.gateway-health-check-dev.self_link]
 
   backend {
-    group = google_compute_region_instance_group_manager.gateway-mig-dev.instance_group
+    group = google_compute_region_instance_group_manager.gateway-r-mig-dev.instance_group
   }
 }
 
