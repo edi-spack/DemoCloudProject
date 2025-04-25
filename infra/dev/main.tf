@@ -170,7 +170,6 @@ resource "google_compute_global_forwarding_rule" "gateway-forwarding-rule-dev" {
   load_balancing_scheme = "EXTERNAL"
 }
 
-#######
 # Get the managed DNS zone
 data "google_dns_managed_zone" "dns-zone" {
   name = var.dns_managed_zone_name
@@ -184,4 +183,3 @@ resource "google_dns_record_set" "gateway-dns-record-dev" {
   managed_zone = data.google_dns_managed_zone.dns-zone.name
   rrdatas      = [google_compute_global_address.gateway-static-ip-dev.address]
 }
-#######
