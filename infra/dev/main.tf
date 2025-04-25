@@ -496,9 +496,9 @@ resource "google_compute_region_health_check" "gateway-health-check-dev" {
 # }
 
 # Backend service
-resource "google_compute_region_backend_service" "gateway-backend-service-dev" {
+resource "google_compute_backend_service" "gateway-backend-service-dev" {
   name                  = "gateway-backend-service-dev"
-  region                = var.region
+  # region                = var.region
   protocol              = "HTTP"
   port_name             = "http"
   load_balancing_scheme = "EXTERNAL"
@@ -512,7 +512,7 @@ resource "google_compute_region_backend_service" "gateway-backend-service-dev" {
 # URL Map
 resource "google_compute_url_map" "gateway-url-map-dev" {
   name            = "gateway-url-map-dev"
-  default_service = google_compute_region_backend_service.gateway-backend-service-dev.self_link
+  default_service = google_compute_backend_service.gateway-backend-service-dev.self_link
 }
 
 # Target HTTP Proxy
@@ -533,7 +533,7 @@ resource "google_compute_global_forwarding_rule" "gateway-forwarding-rule-dev" {
 #######
 # Get the managed DNS zone
 data "google_dns_managed_zone" "dns-zone" {
-  name = "gcpdns"
+  name = var.dns_managed_zone_name
 }
 
 # Add the IP to the DNS
