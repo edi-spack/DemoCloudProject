@@ -10,10 +10,11 @@ on:
 jobs:
   apply-terraform-dev:
     runs-on: ubuntu-latest
-    environment: gcp-dev
+    environment: dev
     env:
-      TF_VAR_gcp_project: ${{ secrets.GCP_PROJECT }}
-      TF_VAR_gcp_region: ${{ secrets.GCP_REGION }}
+      TF_VAR_project_id: ${{ vars.PROJECT_ID }}
+      TF_VAR_region: ${{ vars.REGION }}
+      TF_VAR_zone: ${{ vars.ZONE }}
 
     steps:
       - name: Checkout repository

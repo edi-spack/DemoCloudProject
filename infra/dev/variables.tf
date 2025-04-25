@@ -2,10 +2,14 @@
 
 # }
 
-variable "gcp_project" {
+variable "project_id" {
 
 }
 
-variable "gcp_region" {
+variable "region" {
+
+}
+
+variable "zone" {
 
 }
