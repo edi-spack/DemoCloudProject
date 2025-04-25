@@ -15,6 +15,7 @@ jobs:
       TF_VAR_project_id: ${{ vars.PROJECT_ID }}
       TF_VAR_region: ${{ vars.REGION }}
       TF_VAR_zone: ${{ vars.ZONE }}
+      TF_VAR_dns_managed_zone_name: ${{ vars.DNS_MANAGED_ZONE_NAME }}
 
     steps:
       - name: Checkout repository

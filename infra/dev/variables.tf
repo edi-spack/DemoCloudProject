@@ -13,3 +13,7 @@ variable "region" {
 variable "zone" {
 
 }
+
+variable "dns_managed_zone_name" {
+
+}
