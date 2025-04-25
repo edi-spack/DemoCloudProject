@@ -288,8 +288,8 @@ resource "google_compute_region_instance_group_manager" "gateway-region-mig-dev"
   }
 }
 
-resource "google_compute_region_autoscaler" "gateway-autoscaler-dev" {
-  name   = "gateway-autoscaler-dev"
+resource "google_compute_region_autoscaler" "gateway-region-autoscaler-dev" {
+  name   = "gateway-region-autoscaler-dev"
   region = var.gcp_region
   target = google_compute_region_instance_group_manager.gateway-region-mig-dev.id
 
@@ -316,7 +316,7 @@ resource "google_compute_region_backend_service" "gateway-regional-backend-servi
   health_checks = [google_compute_region_health_check.gateway-regional-health-check-dev.self_link]
   backend {
     group = google_compute_region_instance_group_manager.gateway-region-mig-dev.instance_group
-    balancing_mode  = "UTILIZATION"
+    balancing_mode  = "CONNECTION"
     # capacity_scaler = 1.0 # CAN'T SET FOR EXTERNAL
   }
 }
