@@ -45,10 +45,9 @@ resource "google_artifact_registry_repository_iam_member" "cloud-build-push-to-d
 }
 
 # Reserve a static external IP
-resource "google_compute_address" "gateway-static-ip-dev" {
+resource "google_compute_global_address" "gateway-static-ip-dev" {
   name         = "gateway-static-ip-dev"
   address_type = "EXTERNAL"
-  region       = var.region
 }
 
 # Instance Template with container
@@ -165,7 +164,7 @@ resource "google_compute_target_http_proxy" "gateway-lb-proxy-dev" {
 # Global Forwarding Rule
 resource "google_compute_global_forwarding_rule" "gateway-forwarding-rule-dev" {
   name                  = "gateway-forwarding-rule-dev"
-  ip_address            = google_compute_address.gateway-static-ip-dev.address
+  ip_address            = google_compute_global_address.gateway-static-ip-dev.address
   port_range            = "80"
   target                = google_compute_target_http_proxy.gateway-lb-proxy-dev.self_link
   load_balancing_scheme = "EXTERNAL"
@@ -183,6 +182,6 @@ resource "google_dns_record_set" "gateway-dns-record-dev" {
   type         = "A"
   ttl          = 300
   managed_zone = data.google_dns_managed_zone.dns-zone.name
-  rrdatas      = [google_compute_address.gateway-static-ip-dev.address]
+  rrdatas      = [google_compute_global_address.gateway-static-ip-dev.address]
 }
 #######
