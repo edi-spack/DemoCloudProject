@@ -47,11 +47,11 @@
 resource "google_service_account" "cloudbuild-service-account" {
   account_id  = "cloudbuild-service-account"
   description = "Service account for cloudbuild"
-  project     = var.gcp_project
+  project     = var.project_id
 } # cloudbuild-service-account@democloudproject-gcp.iam.gserviceaccount.com
 
 resource "google_project_iam_member" "cloudbuild-sa-project-roles" {
-  project = var.gcp_project
+  project = var.project_id
   role    = "roles/owner"
   member  = "serviceAccount:${google_service_account.cloudbuild-service-account.email}"
 }
@@ -61,11 +61,11 @@ resource "google_project_iam_member" "cloudbuild-sa-project-roles" {
 resource "google_service_account" "compute-service-account" {
   account_id  = "compute-service-account"
   description = "Service account for GCE"
-  project     = var.gcp_project
+  project     = var.project_id
 }
 
 resource "google_project_iam_member" "compute-sa-project-roles" {
-  project = var.gcp_project
+  project = var.project_id
   role    = "roles/owner"
   member  = "serviceAccount:${google_service_account.compute-service-account.email}"
 }
