@@ -10,4 +10,9 @@ class TestController {
     fun helloWorld(): String {
         return "Hello, World!"
     }
+
+    @GetMapping("/")
+    fun healthCheck(): String {
+        return "OK"
+    }
 }
