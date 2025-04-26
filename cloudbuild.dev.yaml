@@ -24,15 +24,21 @@ steps:
       - |
           gcloud compute instance-groups managed rolling-action start-update gateway-mig-dev \
           --version=template=$(gcloud compute instance-templates list --filter="name~'gateway-vm-template-dev'" --format="value(name)" --sort-by=~creationTimestamp | head -1) \
-          --zone=europe-central2-b
+#          --zone=europe-central2-b
+          --region=europe-central2
 
 images:
   - 'europe-central2-docker.pkg.dev/democloudproject-gcp/docker-repo/gateway-dev:latest'
 #images:
 #  - 'gcr.io/$PROJECT_ID/gateway-dev:latest'
 
+#volumes:
+#  - name: gradle-cache
+#    path: /root/.gradle
+
 options:
   logging: CLOUD_LOGGING_ONLY
+#  machineType: E2_HIGHCPU_8 # ???
 
 #  # deploy container image to GKE
 #  - name: "gcr.io/cloud-builders/gke-deploy"
