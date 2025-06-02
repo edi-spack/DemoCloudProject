@@ -99,7 +99,8 @@ resource "google_compute_region_instance_group_manager" "gateway-mig-dev" {
     instance_template = google_compute_instance_template.gateway-vm-template-dev.self_link
   }
 
-  target_size = 1
+  # target_size = 1
+  target_size = 0 # TEMPORARY MEASURE TO AVOID COSTS FOR RUNNING INSTANCE
 
   auto_healing_policies {
     health_check      = google_compute_health_check.gateway-health-check-dev.self_link
